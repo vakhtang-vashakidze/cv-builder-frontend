@@ -11,19 +11,28 @@ export const cvSchema = z.object({
         number: z.string().min(4, "Number length should be more than 1"),
     }),
     location: z.object({
-        country: z.string().min(1),
-        city: z.string().min(1),
+        country: z.string().min(1, "Country is required"),
+        city: z.string().min(1, "City is required"),
     }),
-    skills: z.array(z.string().min(1)),
+    skills: z.array(z.string().min(1, "Skill cannot be empty")),
     experiences: z.array(
         z.object({
-            company: z.string().min(1),
-            position: z.string().min(1),
-            description: z.string().min(1),
-            startDate: z.string(), // or z.date() depending on input handling
-            endDate: z.string().optional(),
-            stillWorking: z.boolean(),
-        })
+                company: z.string().min(1, "Company is required"),
+                position: z.string().min(1, "Position is required"),
+                description: z.string().min(1, "Description is required"),
+                startDate: z.string().min(1, "Start date is required"),
+                endDate: z.string().optional(),
+                stillWorking: z.boolean(),
+            })
+            .superRefine((exp, ctx) => {
+                if (!exp.stillWorking && !exp.endDate) {
+                    ctx.addIssue({
+                        path: ['endDate'],
+                        code: z.ZodIssueCode.custom,
+                        message: 'End date is required if not still working',
+                    });
+                }
+            })
     ),
 });
 
