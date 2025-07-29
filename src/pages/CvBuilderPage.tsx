@@ -5,6 +5,9 @@ import {XCircleIcon} from '@heroicons/react/24/solid';
 import type {CVRequest} from '../types/cv';
 
 const CvBuilderPage = () => {
+
+    const [loading, setLoading] = useState(false);
+
     const [formData, setFormData] = useState<CVRequest>({
         firstname: '',
         lastname: '',
@@ -88,6 +91,7 @@ const CvBuilderPage = () => {
         const data = validate();
         if (!data) return;
 
+        setLoading(true);
         try {
             const file = type === 'pdf'
                 ? await cvApi.downloadPdf(data)
@@ -105,6 +109,8 @@ const CvBuilderPage = () => {
             link.click();
         } catch (err) {
             console.error('Download failed', err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -288,6 +294,11 @@ const CvBuilderPage = () => {
                         className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 cursor-pointer">Download
                     Word
                 </button>
+                {loading && (
+                    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+                        <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                )}
             </div>
         </div>
     );
