@@ -18,7 +18,8 @@ export interface Experience {
 }
 
 export interface CVRequest {
-    name: string;
+    firstname: string;
+    lastname: string;
     title: string;
     summary: string;
     phoneNumber: PhoneNumber;
